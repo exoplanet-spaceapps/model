@@ -1,5 +1,10 @@
 # app/calibration/calibrate.py
-import os, numpy as np, joblib, matplotlib.pyplot as plt
+import os, numpy as np, joblib
+import matplotlib
+
+# Force a non-interactive backend so calibration works in headless environments.
+matplotlib.use("Agg", force=True)
+import matplotlib.pyplot as plt
 from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.calibration import calibration_curve

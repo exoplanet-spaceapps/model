@@ -28,20 +28,25 @@ def train(model: nn.Module, train_ds, val_ds, device:str="cpu",
 
     model.to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode="max", factor=0.5, patience=2, verbose=False)
+    sched = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode="max", factor=0.5, patience=2)
     loss_fn = nn.BCEWithLogitsLoss()
 
     best_ap = -1.0; wait=0
     best_path = os.path.join(workdir, "artifacts", "cnn1d.pt")
     history = []
 
+    def _to_float_tensor(x):
+        if isinstance(x, torch.Tensor):
+            return x.to(device=device, dtype=torch.float32)
+        return torch.as_tensor(x, dtype=torch.float32, device=device)
+
     for epoch in range(1, max_epochs+1):
         model.train(); train_loss=0.0; n=0
         t0=time.perf_counter()
         for G,L,Y in train_loader:
-            G=torch.tensor(G, dtype=torch.float32, device=device)
-            L=torch.tensor(L, dtype=torch.float32, device=device)
-            Y=torch.tensor(Y, dtype=torch.float32, device=device)
+            G=_to_float_tensor(G)
+            L=_to_float_tensor(L)
+            Y=_to_float_tensor(Y)
             logits = model(G,L).squeeze(1)
             loss = loss_fn(logits, Y)
             opt.zero_grad(); loss.backward(); opt.step()
@@ -52,9 +57,9 @@ def train(model: nn.Module, train_ds, val_ds, device:str="cpu",
         model.eval(); vs=[]; vy=[]
         with torch.no_grad():
             for G,L,Y in val_loader:
-                G=torch.tensor(G, dtype=torch.float32, device=device)
-                L=torch.tensor(L, dtype=torch.float32, device=device)
-                Y=torch.tensor(Y, dtype=torch.float32, device=device)
+                G=_to_float_tensor(G)
+                L=_to_float_tensor(L)
+                Y=_to_float_tensor(Y)
                 logits=model(G,L).squeeze(1)
                 vs.append(torch.sigmoid(logits).cpu().numpy()); vy.append(Y.cpu().numpy())
         vy=np.concatenate(vy) if vy else np.zeros(0); vp=np.concatenate(vs) if vs else np.zeros(0)
