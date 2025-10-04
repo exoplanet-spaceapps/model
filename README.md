@@ -1,24 +1,28 @@
 # NASA Kepler Exoplanet Classification Project
 
-A machine learning project for classifying Kepler Objects of Interest (KOI) using multiple approaches including Neural Networks, Random Forest, XGBoost, and a Two-Branch 1D-CNN architecture optimized for transit light curve analysis.
+A machine learning project for classifying Kepler Objects of Interest (KOI) using multiple approaches including deep learning (GP+CNN pipeline), traditional ML (Random Forest, XGBoost), and neural networks.
 
 ## 🎯 Project Overview
 
-This project aims to identify potential exoplanets from NASA's Kepler mission data by analyzing light curves and extracted features. The project implements multiple classification models:
+This project aims to identify potential exoplanets from NASA's Kepler mission data by analyzing light curves and extracted features. The project implements a complete ML pipeline from Gaussian Process denoising to deep learning classification.
 
-- **Simple Neural Network** (MLP): 3-layer feedforward network with BatchNorm and GELU activation
-- **Random Forest**: Ensemble classifier with optimized hyperparameters
-- **XGBoost**: Gradient boosting classifier
-- **Two-Branch 1D-CNN** ⭐: State-of-the-art dual-branch convolutional architecture for global and local view analysis
+### Key Features
+
+- **GP Denoising**: Gaussian Process regression for light curve preprocessing
+- **TLS Search**: Transit Least Squares for period detection
+- **Deep Learning**: CNN-based classification pipeline (GP+CNN)
+- **Traditional ML**: Random Forest, XGBoost with GPU acceleration
+- **Neural Networks**: Multiple architectures (MLP, 1D-CNN, GP+CNN)
+- **Comprehensive Benchmarking**: CPU vs GPU performance comparison
 
 ## 📊 Dataset
 
-### Input Data Files
+### Input Data Files (in `data/`)
 
 1. **`tsfresh_features.csv`** (21.6 MB)
    - Time-series features extracted using TSFresh library
    - Contains ~3,500 samples with extracted statistical features
-   - Used for traditional ML models (Random Forest, XGBoost, Simple NN)
+   - Used for traditional ML models (Random Forest, XGBoost, MLP)
 
 2. **`q1_q17_dr25_koi.csv`**
    - Kepler Objects of Interest catalog (Quarters 1-17, Data Release 25)
@@ -30,192 +34,212 @@ This project aims to identify potential exoplanets from NASA's Kepler mission da
 - Remove columns with single unique values
 - Filter out samples with infinity values
 - Fill NaN values with zero or column mean
-- MinMax scaling to [0, 1] range
+- StandardScaler normalization
 - Train/Val/Test split: varies by model (typically 90%/5%/5%)
 
-## 🏗️ Architecture
-
-### Project Structure
+## 🏗️ Project Structure
 
 ```
 model/
-├── app/
+├── app/                          # Application modules
 │   ├── models/
-│   │   └── cnn1d.py              # Two-Branch 1D-CNN implementation
+│   │   └── cnn1d.py             # Two-Branch 1D-CNN implementation
 │   ├── data/
-│   │   └── fold.py               # Phase folding & view construction
+│   │   └── fold.py              # Phase folding & view construction
 │   ├── trainers/
-│   │   ├── cnn1d_trainer.py      # Training loop for CNN
-│   │   └── utils.py              # Utility functions
-│   └── calibration/
-│       └── calibrate.py          # Model calibration utilities
-├── notebooks/
-│   ├── 03b_cnn_train_mps.ipynb   # CNN training on MPS (M-series Mac)
-│   └── 04_newdata_inference.ipynb # Inference on new data
-├── SPECS/
-│   ├── 1D_CNN_SPEC.md            # Detailed CNN specifications
-│   ├── INTEGRATION_PLAN.md        # Integration guidelines
-│   └── model_card_template.md     # Model documentation template
-├── prompts/
-│   └── claude-commands.md         # Development workflow prompts
-├── patches/                       # Code patches for upgrades
-├── koi_project_nn.py             # Simple neural network (MLP)
-├── train_rf_v1.py                # Random Forest classifier
-├── xgboost_koi.py                # XGBoost classifier
-├── requirements.txt              # Python dependencies
+│   │   ├── cnn1d_trainer.py     # Training loop for CNN
+│   │   └── utils.py             # Utility functions
+│   ├── calibration/
+│   │   └── calibrate.py         # Model calibration utilities
+│   ├── denoise/                 # GP denoising modules
+│   ├── search/                  # TLS period search
+│   └── validation/              # Validation utilities
+├── notebooks/                    # Jupyter notebooks
+│   ├── 03b_cnn_train.ipynb      # CNN training
+│   └── 04_newdata_inference.ipynb # Inference pipeline
+├── scripts/                      # Executable scripts
+│   ├── benchmarks/              # Performance benchmarking
+│   │   ├── complete_gpcnn_benchmark.py    # Complete GP+CNN benchmark
+│   │   ├── ultraoptimized_benchmark.py    # Ultra-optimized comparison
+│   │   ├── ultraoptimized_cpu_models.py   # CPU-optimized models
+│   │   ├── ultraoptimized_gpu_models.py   # GPU-optimized models
+│   │   └── visualize_gpcnn_comparison.py  # Visualization tools
+│   └── legacy/                  # Legacy training scripts
+│       ├── koi_project_nn.py    # Simple neural network (MLP)
+│       ├── train_rf_v1.py       # Random Forest classifier
+│       └── xgboost_koi.py       # XGBoost classifier
+├── data/                         # Data files (gitignored if large)
+│   ├── tsfresh_features.csv     # Extracted features
+│   └── q1_q17_dr25_koi.csv      # KOI catalog
+├── reports/                      # Generated reports & results
+│   ├── figures/                 # Plots and visualizations (PDF/PNG)
+│   ├── results/                 # Model results (JSON)
+│   ├── FINAL_GPU_BENCHMARK_REPORT.txt
+│   ├── FINAL_GPU_RESULTS_REPORT.md
+│   ├── GP_CNN_COMPLETE_ANALYSIS.md
+│   └── ULTRA_OPTIMIZATION_FINAL_REPORT.md
+├── SPECS/                        # Technical specifications
+│   ├── 1D_CNN_SPEC.md           # CNN architecture spec
+│   ├── PIPELINE_SPEC.md         # Full pipeline specification
+│   └── INTEGRATION_PLAN.md      # Integration guidelines
+├── prompts/                      # Development workflow prompts
+│   └── claude-commands.md       # Claude Code automation
+├── docs/                         # Documentation
+├── patches/                      # Code patches for upgrades
+├── .claude/                      # Claude Code configuration
 ├── CLAUDE.md                     # Development guide
+├── CITATIONS.md                  # References
+├── README_UPGRADE.md             # Upgrade instructions
+├── requirements.txt              # Python dependencies
 └── README.md                     # This file
 ```
 
-### Two-Branch 1D-CNN Architecture
+## 🚀 Quick Start
 
-The modern CNN approach uses a dual-branch architecture:
-
-**Global Branch** (app/models/cnn1d.py:40)
-- Input: Full phase-folded light curve (2000 time steps)
-- Conv layers with kernels: [7, 5, 5]
-- Captures overall transit morphology
-
-**Local Branch** (app/models/cnn1d.py:41)
-- Input: Zoomed transit region (512 time steps)
-- Conv layers with kernels: [5, 3, 3]
-- Captures fine-grained transit features
-
-**Architecture Details:**
-```
-ConvBlock: Conv1D → BatchNorm → ReLU → MaxPool
-Branch: ConvBlock × 3 → Global Average Pooling
-TwoBranchCNN1D:
-  ├── Global Branch (32 channels → 64 channels)
-  ├── Local Branch (32 channels → 64 channels)
-  ├── Concatenate [128 features]
-  ├── FC1 (128) → ReLU → Dropout(0.3)
-  └── FC2 (1) → Logits
-```
-
-**Input Processing** (app/data/fold.py)
-- Phase folding with period and t0
-- Robust normalization using MAD (Median Absolute Deviation)
-- Equal-spaced resampling for fixed-length input
-- Global view: entire phase [0, 1]
-- Local view: transit window (k×duration/period)
-
-## 🚀 Usage
-
-### Requirements
+### 1. Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Dependencies:
-- numpy <= 2.0
-- pandas
-- scikit-learn
-- matplotlib
-- seaborn
-- torch (for CNN models)
+Key dependencies:
+- `torch` - Deep learning framework
+- `numpy`, `pandas` - Data processing
+- `scikit-learn` - Traditional ML
+- `xgboost` - Gradient boosting
+- `transitleastsquares` - Period detection
+- `celerite2` or `starry_process` - GP denoising (optional)
 
-### Running Models
+### 2. Running Benchmarks
 
-#### 1. Simple Neural Network (MLP)
+#### Complete GP+CNN Benchmark
 ```bash
-python koi_project_nn.py
+python scripts/benchmarks/complete_gpcnn_benchmark.py
 ```
-- 3-layer MLP with 256→64→1 architecture
+Runs comprehensive benchmark including:
+- GP+CNN pipeline
+- Neural Networks (Simple MLP, Heavy NN)
+- XGBoost (GPU & CPU)
+- Random Forest (CPU)
+
+#### Ultra-Optimized Models
+```bash
+python scripts/benchmarks/ultraoptimized_benchmark.py
+```
+Tests 2025 best practices:
+- GPU optimizations (cuDNN, TF32, Mixed Precision)
+- CPU optimizations (Intel MKL, OpenMP)
+- Comparison across all model types
+
+#### Visualization
+```bash
+python scripts/benchmarks/visualize_gpcnn_comparison.py
+```
+Generates comparison plots and reports.
+
+### 3. Legacy Models
+
+#### Simple Neural Network (MLP)
+```bash
+python scripts/legacy/koi_project_nn.py
+```
+- 3-layer MLP: 256→64→1
 - BatchNorm + GELU activation
 - AdamW optimizer (lr=3e-5)
-- Early stopping (patience=30)
 
-#### 2. Random Forest
+#### Random Forest
 ```bash
-python train_rf_v1.py
+python scripts/legacy/train_rf_v1.py
 ```
-- Optimized hyperparameters: depth=8, n_estimators=200
+- Optimized: depth=8, n_estimators=200
 - Grid search with cross-validation
-- Feature importance analysis
 
-#### 3. XGBoost
+#### XGBoost
 ```bash
-python xgboost_koi.py
+python scripts/legacy/xgboost_koi.py
 ```
 - Gradient boosting with tree-based learning
 
-#### 4. Two-Branch 1D-CNN (Recommended)
+## 🎯 Model Architectures
 
-**Training:**
-```python
-from app.models.cnn1d import make_model
-from app.trainers.cnn1d_trainer import train
-from app.data.fold import LightCurveViewsDataset, Item
+### 1. GP+CNN Pipeline (Recommended)
 
-# Create dataset
-items = [Item(time, flux, period, t0, duration, label), ...]
-train_ds = LightCurveViewsDataset(items, g_len=2000, l_len=512)
+**Pipeline:**
+1. **GP Denoising**: Remove systematics using Gaussian Process regression
+2. **TLS Search**: Detect periods with Transit Least Squares
+3. **CNN Classification**: Deep learning on denoised light curves
 
-# Train model
-model = make_model()
-metrics = train(
-    model, train_ds, val_ds,
-    device="mps",  # or "cuda" or "cpu"
-    batch_size=64,
-    lr=1e-3,
-    max_epochs=50,
-    patience=7,
-    workdir="./outputs"
-)
-```
+**Architecture:**
+- GP simulator: Linear(input) → 1024 → 2048
+- CNN layers: Conv1D blocks with BatchNorm
+- Classifier: FC layers with LayerNorm and GELU
+- Optimizations: Mixed precision (AMP), GPU acceleration
 
-**Jupyter Notebooks:**
-- `notebooks/03b_cnn_train_mps.ipynb`: Training on M-series Mac (MPS backend)
-- `notebooks/04_newdata_inference.ipynb`: Inference pipeline
+**Key Features:**
+- Handles raw light curves (no manual feature engineering)
+- Multi-scale pattern recognition
+- GPU-optimized for fast training
+- Best for transit morphology analysis
 
-### Device Support
+### 2. Traditional ML Models
 
-The CNN implementation supports multiple backends:
-- **MPS**: Apple Silicon (M1/M2/M3/M4 Mac)
-- **CUDA**: NVIDIA GPUs
-- **CPU**: Fallback for all platforms
+**Random Forest:**
+- Best for TSFresh features
+- No GPU required
+- Excellent interpretability
+- Achieves ~88% ROC-AUC
 
-Device selection:
-```python
-device = "mps" if torch.backends.mps.is_available() else \
-         "cuda" if torch.cuda.is_available() else "cpu"
-```
+**XGBoost:**
+- GPU acceleration available
+- Fast training on large datasets
+- Good balance of speed and accuracy
+- Achieves ~87% ROC-AUC
 
-## 📈 Training Details
+### 3. Neural Networks
 
-### CNN Training Configuration
+**Simple MLP:**
+- Lightweight baseline
+- Fast training
+- Good for feature-based data
 
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| Optimizer | AdamW | Weight decay regularization |
-| Learning Rate | 1e-3 | Initial learning rate |
-| Weight Decay | 1e-4 | L2 regularization |
-| Scheduler | ReduceLROnPlateau | Adaptive LR (factor=0.5, patience=2) |
-| Loss Function | BCEWithLogitsLoss | Binary cross-entropy with logits |
-| Batch Size | 64 | Training batch size |
-| Max Epochs | 50 | Maximum training epochs |
-| Early Stopping | Patience=7 | Stop if no improvement in val AP |
+**Heavy NN:**
+- 5-layer deep network
+- GPU-optimized
+- Mixed precision training
 
-### Evaluation Metrics
+## 📈 Performance Benchmarks
 
-- **Primary**: Average Precision (AP) / PR-AUC
-- **Secondary**: ROC-AUC
-- **Classification**: Accuracy, Precision, Recall, F1-Score
-- **Visualization**: Confusion Matrix, Loss curves
+### Latest Results (from reports/)
 
-### Output Files
+| Model | ROC-AUC | Accuracy | Device | Training Time | GPU Util |
+|-------|---------|----------|--------|---------------|----------|
+| Random Forest | 0.881 | 81.6% | CPU | 14.2s | N/A |
+| XGBoost (GPU) | 0.871 | 79.9% | GPU | 3.4s | 84% |
+| GP+CNN | 0.734 | 62.9% | GPU | 25.8s | 100% |
+| Heavy NN | 0.683 | 65.0% | GPU | 8.9s | 7% |
+| Simple MLP | 0.667 | 61.8% | GPU | 2.1s | 0% |
 
-After training, the following files are generated:
+**Key Findings:**
+- Random Forest (CPU) achieves best performance on TSFresh features
+- XGBoost shows excellent GPU utilization (84%) with 4x speedup
+- GP+CNN designed for raw light curves; underperforms on extracted features
+- Tree-based models excel on tabular data
 
-```
-workdir/
-├── artifacts/
-│   └── cnn1d.pt                 # Best model checkpoint
-└── reports/
-    └── metrics_cnn.json         # Training metrics & history
-```
+### GPU Optimizations Applied
+
+**GPU Models:**
+- ✅ cuDNN benchmark mode
+- ✅ TF32 for Tensor Cores
+- ✅ Mixed Precision (AMP)
+- ✅ Pinned memory transfers
+- ✅ Non-blocking data loading
+- ✅ Batch size tuning (divisible by 8)
+
+**CPU Models:**
+- ✅ Physical core allocation
+- ✅ MKL/OpenMP threading
+- ✅ Memory-aligned arrays
+- ✅ Intel Extension (if available)
 
 ## 🔧 Development Workflow
 
@@ -223,115 +247,55 @@ workdir/
 
 This project includes automation for development with Claude:
 
-1. **Setup**: Extract upgrade package to project root
-2. **Follow**: Instructions in `CLAUDE.md`
-3. **Execute**: Prompts from `prompts/claude-commands.md`
-4. **Specs**: Detailed specifications in `SPECS/`
+1. **Setup**: Read `CLAUDE.md` for guidelines
+2. **Specs**: Review detailed specifications in `SPECS/`
+3. **Prompts**: Execute workflows from `prompts/claude-commands.md`
+4. **Benchmarks**: Run scripts in `scripts/benchmarks/` for performance testing
 
-### Model Development Guidelines
+### Adding New Models
 
-1. **Data Preparation** (`app/data/`):
-   - Implement phase folding for light curves
-   - Create dual views (global + local)
-   - Robust normalization
+1. **Implement** in `app/models/`
+2. **Add trainer** in `app/trainers/`
+3. **Create benchmark** in `scripts/benchmarks/`
+4. **Document** performance in `reports/`
 
-2. **Model Architecture** (`app/models/`):
-   - Follow two-branch pattern
-   - Use batch normalization
-   - Global average pooling for invariance
+## 📊 Results & Reports
 
-3. **Training** (`app/trainers/`):
-   - Seed for reproducibility
-   - Early stopping on validation AP
-   - Save best model checkpoint
-   - Log metrics to JSON
+All benchmark results and reports are stored in `reports/`:
 
-4. **Evaluation** (`app/calibration/`):
-   - Calibration for probability estimates
-   - Comprehensive metrics reporting
+- **Figures**: `reports/figures/*.{png,pdf}` - Visualizations
+- **Results**: `reports/results/*.json` - Numerical results
+- **Reports**: `reports/*.md` - Analysis and findings
 
-## 📊 Performance Benchmarks
+## 🎓 Technical Background
 
-### Simple Neural Network (MLP)
-- Architecture: 256→64→1
-- Training: ~3500 samples
-- Early stopping: patience=30
-- Metrics: Accuracy, F1, Precision, Recall
+### Transit Method
+Detect periodic dips in stellar brightness when an orbiting planet passes in front of the star.
 
-### Random Forest
-- Best params: depth=8, estimators=200, split=9
-- Cross-validation: 10-fold CV
-- Feature importance analysis available
+### Kepler Mission
+NASA space telescope that monitored 150,000+ stars (2009-2018).
 
-### Two-Branch 1D-CNN
-- Primary metric: PR-AUC (Average Precision)
-- Benefits:
-  - Direct light curve analysis (no feature engineering)
-  - Dual-scale pattern recognition
-  - Better generalization on transit morphology
-  - MPS acceleration on Apple Silicon
+### KOI Classification
+Distinguish true planetary transits from false positives (eclipsing binaries, stellar variability).
 
-## 🛠️ Advanced Features
+## 📝 Citation
 
-### Phase Folding (app/data/fold.py:10)
-```python
-phase_fold(t, period, t0)  # Fold time series by orbital period
-```
-
-### Robust Normalization (app/data/fold.py:21)
-```python
-robust_norm(x)  # MAD-based normalization (outlier-resistant)
-```
-
-### View Construction (app/data/fold.py:26)
-```python
-make_views(time, flux, period, t0, duration,
-           g_len=2000, l_len=512, k=3.0)
-# Returns: (global_view, local_view)
-```
-
-## 📝 Model Card
-
-For production deployment, use the model card template in `SPECS/model_card_template.md` to document:
-- Model details and intended use
-- Training data and evaluation metrics
-- Ethical considerations
-- Limitations and biases
-
-## 🔬 Research Background
-
-This project is based on transit photometry analysis for exoplanet detection:
-
-1. **Transit Method**: Detect periodic dips in stellar brightness when an orbiting planet passes in front of the star
-2. **Kepler Mission**: NASA space telescope that monitored 150,000+ stars (2009-2018)
-3. **KOI Classification**: Distinguish true planetary transits from false positives (eclipsing binaries, stellar variability, etc.)
-
-## 🤝 Contributing
-
-Development workflow:
-1. Review specifications in `SPECS/`
-2. Follow coding patterns in `app/`
-3. Add tests for new features
-4. Update documentation
+If you use this code, please cite:
+- Kepler Mission: https://www.nasa.gov/kepler
+- NASA Exoplanet Archive
+- See `CITATIONS.md` for detailed references
 
 ## 📄 License
 
 This project analyzes public NASA Kepler mission data.
 
-## 🔗 References
+## 🤝 Contributing
 
-- **Kepler Mission**: https://www.nasa.gov/kepler
-- **KOI Catalog**: NASA Exoplanet Archive
-- **TSFresh**: Time series feature extraction library
-- **PyTorch**: Deep learning framework
-
-## 📧 Contact
-
-For questions about model implementation or data processing, refer to:
-- `SPECS/` directory for detailed specifications
-- `prompts/claude-commands.md` for development workflows
-- Issue tracker (if applicable)
+1. Review specifications in `SPECS/`
+2. Follow coding patterns in `app/`
+3. Add tests for new features
+4. Update documentation and benchmarks
 
 ---
 
-**Note**: This project demonstrates multiple ML approaches for exoplanet classification. The Two-Branch 1D-CNN represents the most modern approach with direct light curve analysis, while the feature-based models (RF, XGBoost) provide baseline comparisons.
+**Note**: This project demonstrates a complete ML pipeline for exoplanet detection, from GP denoising to deep learning classification. The GP+CNN pipeline represents the modern approach for raw light curve analysis, while feature-based models (RF, XGBoost) provide strong baseline performance on extracted features.
