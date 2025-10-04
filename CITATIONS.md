@@ -1,0 +1,7 @@
+- TLS：Hippke & Heller 2019；TLS survey 2019（回收率 93% vs 76%）
+- BLS：Astropy BoxLeastSquares
+- GP：celerite2、starry_process、Luger+ 2021
+- ExoMiner：Valizadegan+ 2021；NASA 公告
+- AstroNet：Shallue & Vanderburg 2018；AstroNet-K2（Dattilo+ 2019）
+- Lightkurve：docs 與 search_lightcurve
+- Calibration：sklearn User Guide + API
