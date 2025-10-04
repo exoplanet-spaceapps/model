@@ -187,3 +187,8 @@ coordination/orchestration/*
 claude-flow
 # Removed Windows wrapper files per user request
 hive-mind-prompt-*.txt
+
+# Claude Code configuration and prompts (local only)
+.claude/
+CLAUDE.md
+prompts/
