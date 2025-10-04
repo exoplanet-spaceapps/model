@@ -1,0 +1,6 @@
+numpy <= 2.0
+csv
+pandas
+scikit-learn
+matplotlib
+seaborn
