@@ -1,0 +1,89 @@
+{
+  "gp_cnn_real": {
+    "model": "GP+CNN Pipeline (Real)",
+    "accuracy": 0.6449864498644986,
+    "precision": 0.5915032679738562,
+    "recall": 0.9679144385026738,
+    "f1": 0.7342799188640974,
+    "roc_auc": 0.8203854968560851,
+    "training_time": 4.930419206619263,
+    "architecture": "Two-branch CNN with GP denoising layer",
+    "status": "Actually trained on real data"
+  },
+  "previous_models": {
+    "Neural Network": {
+      "accuracy": 0.7588075880758808,
+      "precision": 0.7168141592920354,
+      "recall": 0.8663101604278075,
+      "f1": 0.784503631961259,
+      "roc_auc": 0.834312746077452,
+      "training_time": 2.146998643875122
+    },
+    "XGBoost": {
+      "accuracy": 0.8102981029810298,
+      "precision": 0.7510729613733905,
+      "recall": 0.9358288770053476,
+      "f1": 0.8333333333333334,
+      "roc_auc": 0.8786801433860257,
+      "training_time": 4.028876066207886
+    },
+    "Random Forest": {
+      "accuracy": 0.7831978319783198,
+      "precision": 0.7183673469387755,
+      "recall": 0.9411764705882353,
+      "f1": 0.8148148148148148,
+      "roc_auc": 0.8759181994476112,
+      "training_time": 0.7992234230041504
+    },
+    "Simple MLP": {
+      "accuracy": 0.6802168021680217,
+      "precision": 0.6374501992031872,
+      "recall": 0.8556149732620321,
+      "f1": 0.730593607305936,
+      "roc_auc": 0.6962449315390491,
+      "training_time": 0.09253239631652832
+    }
+  },
+  "final_ranking": [
+    {
+      "rank": 1,
+      "model": "XGBoost",
+      "accuracy": 0.8102981029810298,
+      "roc_auc": 0.8786801433860257,
+      "f1": 0.8333333333333334,
+      "training_time": 4.028876066207886
+    },
+    {
+      "rank": 2,
+      "model": "Random Forest",
+      "accuracy": 0.7831978319783198,
+      "roc_auc": 0.8759181994476112,
+      "f1": 0.8148148148148148,
+      "training_time": 0.7992234230041504
+    },
+    {
+      "rank": 3,
+      "model": "Neural Network",
+      "accuracy": 0.7588075880758808,
+      "roc_auc": 0.834312746077452,
+      "f1": 0.784503631961259,
+      "training_time": 2.146998643875122
+    },
+    {
+      "rank": 4,
+      "model": "GP+CNN (Real)",
+      "accuracy": 0.6449864498644986,
+      "roc_auc": 0.8203854968560851,
+      "f1": 0.7342799188640974,
+      "training_time": 4.930419206619263
+    },
+    {
+      "rank": 5,
+      "model": "Simple MLP",
+      "accuracy": 0.6802168021680217,
+      "roc_auc": 0.6962449315390491,
+      "f1": 0.730593607305936,
+      "training_time": 0.09253239631652832
+    }
+  ]
+}

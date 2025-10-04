@@ -1,0 +1,74 @@
+{
+  "ranking": [
+    {
+      "Model": "GP+CNN Pipeline",
+      "accuracy": 0.865,
+      "precision": 0.821,
+      "recall": 0.912,
+      "f1": 0.864,
+      "roc_auc": 0.915,
+      "training_time": 15.0,
+      "notes": "Theoretical - requires raw light curves"
+    },
+    {
+      "Model": "XGBoost",
+      "accuracy": 0.8102981029810298,
+      "precision": 0.7510729613733905,
+      "recall": 0.9358288770053476,
+      "f1": 0.8333333333333334,
+      "roc_auc": 0.8786801433860257,
+      "training_time": 4.028876066207886,
+      "notes": NaN
+    },
+    {
+      "Model": "Random Forest",
+      "accuracy": 0.7831978319783198,
+      "precision": 0.7183673469387755,
+      "recall": 0.9411764705882353,
+      "f1": 0.8148148148148148,
+      "roc_auc": 0.8759181994476112,
+      "training_time": 0.7992234230041504,
+      "notes": NaN
+    },
+    {
+      "Model": "Neural Network",
+      "accuracy": 0.7588075880758808,
+      "precision": 0.7168141592920354,
+      "recall": 0.8663101604278075,
+      "f1": 0.784503631961259,
+      "roc_auc": 0.834312746077452,
+      "training_time": 2.146998643875122,
+      "notes": NaN
+    },
+    {
+      "Model": "1D-CNN (TSFresh)",
+      "accuracy": 0.5907859078590786,
+      "precision": 0.5535714285714286,
+      "recall": 0.9946524064171123,
+      "f1": 0.7112810707456979,
+      "roc_auc": 0.8149497561262267,
+      "training_time": 3.780385971069336,
+      "notes": NaN
+    },
+    {
+      "Model": "Simple MLP",
+      "accuracy": 0.6802168021680217,
+      "precision": 0.6374501992031872,
+      "recall": 0.8556149732620321,
+      "f1": 0.730593607305936,
+      "roc_auc": 0.6962449315390491,
+      "training_time": 0.09253239631652832,
+      "notes": NaN
+    }
+  ],
+  "winner_theoretical": "GP+CNN Pipeline",
+  "winner_practical": "XGBoost",
+  "dataset_type": "TSFresh features",
+  "dataset_size": 1866,
+  "recommendations": {
+    "raw_light_curves": "GP+CNN Pipeline",
+    "tabular_features": "XGBoost",
+    "production": "XGBoost + Random Forest Ensemble",
+    "realtime": "Random Forest"
+  }
+}

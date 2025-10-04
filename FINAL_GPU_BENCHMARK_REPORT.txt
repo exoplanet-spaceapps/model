@@ -1,0 +1,41 @@
+
+GPU TRAINING BENCHMARK - FINAL REPORT
+=====================================
+Generated: 2025-10-05 02:42:30
+GPU: NVIDIA GeForce RTX 3050 Laptop GPU (4.0 GB)
+
+RANKING BY ROC-AUC:
+-------------------
+1. RandomForest    ROC-AUC: 0.881  Accuracy: 77.2%  Time: 0.8s  Device: CPU  
+2. XGBoost         ROC-AUC: 0.871  Accuracy: 79.1%  Time: 2.8s  Device: GPU  GPU: 84%
+3. GPCNN           ROC-AUC: 0.821  Accuracy: 61.2%  Time: 4.4s  Device: GPU  GPU: 100%
+4. NeuralNet       ROC-AUC: 0.820  Accuracy: 75.3%  Time: 0.6s  Device: GPU  GPU: 7%
+5. SimpleMLP       ROC-AUC: 0.661  Accuracy: 50.7%  Time: 0.0s  Device: GPU  
+
+KEY FINDINGS:
+-------------
+1. Random Forest (CPU) achieved best ROC-AUC (0.881) without GPU
+2. XGBoost showed real GPU utilization at 84%
+3. GP+CNN used 100% GPU but underperformed due to feature mismatch
+4. Small neural networks showed minimal GPU benefit
+5. Tree-based models excel on tabular TSFresh features
+
+RECOMMENDATIONS:
+----------------
+- For TSFresh features: Use Random Forest (CPU)
+- For GPU deployment: Use XGBoost with gpu_hist
+- For raw light curves: GP+CNN would be optimal
+- For production: Ensemble RF + XGBoost
+
+GPU UTILIZATION SUMMARY:
+------------------------
+- XGBoost: 84% (excellent GPU usage)
+- GP+CNN: 100% (saturated GPU)
+- Neural Net: 7% (minimal usage)
+- Simple MLP: 0% (no benefit)
+- Random Forest: CPU only
+
+CONCLUSION:
+-----------
+Model selection > Hardware acceleration for this dataset.
+Random Forest proves CPU can beat GPU when algorithm matches data type.

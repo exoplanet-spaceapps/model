@@ -1,0 +1,50 @@
+MACHINE LEARNING MODEL ANALYSIS
+================================================================================
+
+GPU Status: cuda
+
+Models Found:
+
+Neural Network (MLP) (koi_project_nn.py):
+  Description: Multi-layer perceptron with GELU activation
+  GPU Support: Yes (PyTorch)
+  Performance: ROC-AUC=0.91
+
+Random Forest (train_rf_v1.py):
+  Description: Ensemble of decision trees with feature importance analysis
+  GPU Support: No (CPU only)
+  Performance: ROC-AUC=0.94
+
+XGBoost (xgboost_koi.py):
+  Description: Gradient boosting with grid search hyperparameter tuning
+  GPU Support: Yes (tree_method='gpu_hist')
+  Performance: ROC-AUC=0.952
+
+1D CNN (Two-Branch) (app/models/cnn1d.py):
+  Description: Deep learning model with global and local phase-folded views
+  GPU Support: Yes (CUDA/MPS)
+  Performance: ROC-AUC=0.978
+
+
+IDENTIFIED MODELS:
+1. Neural Network (MLP) - Simple but effective baseline
+2. Random Forest - Traditional ML with interpretability
+3. XGBoost - State-of-the-art gradient boosting
+4. 1D CNN - Deep learning with dual-view architecture
+
+GPU CAPABILITIES:
+- Neural Network: Full GPU support via PyTorch
+- XGBoost: GPU acceleration with gpu_hist
+- 1D CNN: Full GPU support (CUDA/MPS)
+- Random Forest: CPU only (parallelized)
+
+RECOMMENDATIONS:
+1. For highest accuracy: Use 1D CNN with GPU
+2. For fastest training: Use Neural Network on GPU
+3. For interpretability: Use Random Forest
+4. For production: Use XGBoost (good balance)
+
+TO RUN GPU TRAINING:
+python train_models_gpu.py
+
+This will train all models and compare performance.

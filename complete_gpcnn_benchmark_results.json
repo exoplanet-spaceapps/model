@@ -1,0 +1,43 @@
+{
+  "results": {
+    "GP+CNN_GPU": {
+      "accuracy": 0.7696476964769647,
+      "precision": 0.7297297297297297,
+      "recall": 0.8663101604278075,
+      "f1": 0.7921760391198044,
+      "roc_auc": 0.8229564553093964,
+      "time": 12.553664207458496,
+      "device": "GPU",
+      "parameters": 3983649
+    },
+    "NeuralNet_GPU": {
+      "accuracy": 0.7669376693766937,
+      "roc_auc": 0.8371628371628372,
+      "time": 0.2597050666809082,
+      "device": "GPU"
+    },
+    "XGBoost_GPU": {
+      "accuracy": 0.8102981029810298,
+      "roc_auc": 0.8688370453076335,
+      "time": 2.6200852394104004,
+      "device": "GPU"
+    },
+    "XGBoost_CPU": {
+      "accuracy": 0.8130081300813008,
+      "roc_auc": 0.871128871128871,
+      "time": 5.5518434047698975,
+      "device": "CPU"
+    },
+    "RandomForest_CPU": {
+      "accuracy": 0.7831978319783198,
+      "roc_auc": 0.87879767291532,
+      "time": 2.436249256134033,
+      "device": "CPU"
+    }
+  },
+  "system": {
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "cpu_cores": 4
+  },
+  "timestamp": "2025-10-05 02:59:48"
+}

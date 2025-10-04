@@ -1,0 +1,31 @@
+
+GPU TRAINING RESULTS REPORT
+===========================
+Date: 2025-10-05 02:23:27.927951
+Device: cuda
+Data: tsfresh_features.csv
+Samples: 1866 total (1266 train, 231 val, 369 test)
+Features: 738
+
+PERFORMANCE COMPARISON
+----------------------
+         Model Accuracy Precision Recall    F1 ROC-AUC Time (s)
+Neural Network    0.759     0.717  0.866 0.785   0.834      2.1
+       XGBoost    0.810     0.751  0.936 0.833   0.879      4.0
+ Random Forest    0.783     0.718  0.941 0.815   0.876      0.8
+    Simple MLP    0.680     0.637  0.856 0.731   0.696      0.1
+
+KEY FINDINGS
+------------
+1. Best Model: XGBoost (ROC-AUC: 0.879)
+2. GPU Acceleration:
+   - Neural Network: 2.1s
+   - XGBoost: 4.0s
+3. CPU Performance:
+   - Random Forest: 0.8s
+
+RECOMMENDATIONS
+---------------
+- XGBoost achieved the best ROC-AUC score
+- Neural Network showed competitive performance with GPU acceleration
+- Random Forest provides good interpretability

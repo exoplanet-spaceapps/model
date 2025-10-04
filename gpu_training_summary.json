@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-10-05T02:24:38.803199",
+  "winner": "XGBoost",
+  "best_roc_auc": 0.8786801433860257,
+  "best_accuracy": 0.8102981029810298,
+  "model_rankings": [
+    {
+      "Model": "XGBoost",
+      "roc_auc": 0.8786801433860257
+    },
+    {
+      "Model": "Random Forest",
+      "roc_auc": 0.8759181994476112
+    },
+    {
+      "Model": "Neural Network",
+      "roc_auc": 0.834312746077452
+    },
+    {
+      "Model": "Simple MLP",
+      "roc_auc": 0.6962449315390491
+    }
+  ],
+  "gpu_utilized": true,
+  "total_models_tested": 4
+}
