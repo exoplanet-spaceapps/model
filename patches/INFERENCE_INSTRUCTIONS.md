@@ -1,0 +1,1 @@
+請在 04_newdata_inference.ipynb 增加 CNN 模型載入與推論分支（偵測 artifacts/cnn1d.pt + calibrator.joblib 後使用）。參考此檔中的程式片段。
