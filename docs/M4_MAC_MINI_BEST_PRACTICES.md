@@ -361,5 +361,5 @@ def stable_training_config():
 - [M4 Mac mini Benchmarks](https://browser.geekbench.com/macs/mac-mini-2024-10c-cpu)
 
 ---
-*最後更新: 2024年11月*
+*最後更新: 2025年10月*
 *針對 NASA Transit Detection Model 優化*
