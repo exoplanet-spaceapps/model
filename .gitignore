@@ -197,3 +197,16 @@ hive-mind-prompt-*.txt
 CLAUDE.md
 prompts/claude-commands.md
 README_UPGRADE.md
+
+# Virtual environments (WSL/Windows)
+venv_gpu/
+wsl_venv/
+
+# Large dataset files
+data/kaggle_kepler/
+data/cached_lightcurves/*.npy
+
+# Training logs
+training_log.txt
+training_log_venv.txt
+download_log.txt

@@ -30,6 +30,16 @@ from threading import Lock
 import warnings
 warnings.filterwarnings('ignore')
 
+# Enable AWS S3 cloud access for faster downloads
+try:
+    from astroquery.mast import Observations
+    Observations.enable_cloud_dataset()
+    print("[INFO] AWS S3 cloud access enabled (s3://stpubdata/kepler/public)")
+    print("[INFO] Downloads will be significantly faster!")
+except Exception as e:
+    print(f"[WARN] Could not enable S3 access: {e}")
+    print("[INFO] Falling back to standard MAST downloads")
+
 print("="*80)
 print("FAST KEPLER LIGHT CURVE DOWNLOADER")
 print("="*80)
@@ -44,7 +54,7 @@ TARGET_CONFIRMED = 200
 TARGET_FALSE_POS = 200
 TOTAL_TARGET = TARGET_CONFIRMED + TARGET_FALSE_POS
 
-MAX_WORKERS = 8  # Parallel download threads (user requested)
+MAX_WORKERS = 8  # Parallel download threads (user requested - using AWS S3)
 CACHE_DIR = Path('data/cached_lightcurves')
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -163,10 +173,10 @@ def download_single_koi(kepid, is_planet, max_retries=3):
 
             # Extract flux
             flux = lc.flux.value
-            time = lc.time.value
+            lc_time = lc.time.value
 
             # Remove NaNs
-            mask = ~np.isnan(flux) & ~np.isnan(time)
+            mask = ~np.isnan(flux) & ~np.isnan(lc_time)
             flux = flux[mask]
 
             if len(flux) < 100:
@@ -189,7 +199,7 @@ def download_single_koi(kepid, is_planet, max_retries=3):
         except Exception as e:
             if attempt == max_retries - 1:
                 return (kepid, None, is_planet, False, f'error_{str(e)[:20]}')
-            time.sleep(1)  # Wait before retry
+            time.sleep(5)  # Wait 5s before retry due to MAST timeouts
 
     return (kepid, None, is_planet, False, 'max_retries')
 

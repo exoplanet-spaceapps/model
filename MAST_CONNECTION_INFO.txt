@@ -1,0 +1,66 @@
+====================================================================
+MAST Archive 伺服器連線資訊
+====================================================================
+
+【主要伺服器資訊】
+主機名稱: mast.stsci.edu
+實際主機: mast-cluster.stsci.edu
+IP 位址: 130.167.220.112
+端口: 443 (HTTPS)
+
+【API 端點】
+主要 API: https://mast.stsci.edu/api/v0.1/
+下載 API: https://mast.stsci.edu/api/v0.1/Download/file
+Portal: https://mastportal.stsci.edu
+服務 API: https://mast.stsci.edu/portal/Mashup/Mashup.asmx/invoke
+
+【連線測試指令】
+
+1. Ping 測試 (ICMP):
+   ping mast.stsci.edu
+   ping 130.167.220.112
+
+2. 端口測試 (HTTPS - 443):
+   telnet mast.stsci.edu 443
+   或
+   Test-NetConnection -ComputerName mast.stsci.edu -Port 443
+
+3. HTTP 連線測試:
+   curl -I https://mast.stsci.edu/
+   curl -I https://mast.stsci.edu/api/v0.1/
+
+4. DNS 解析測試:
+   nslookup mast.stsci.edu
+   dig mast.stsci.edu
+
+【PowerShell 測試指令】（Windows 推薦）
+# 測試連線
+Test-NetConnection -ComputerName mast.stsci.edu -Port 443 -InformationLevel Detailed
+
+# 測試 HTTP
+Invoke-WebRequest -Uri "https://mast.stsci.edu/" -Method Head -UseBasicParsing
+
+【連線測試結果】
+✅ HTTPS 連線: 正常 (回應時間 ~1-2 秒)
+❌ ICMP Ping: 封鎖 (100% 丢包)
+✅ DNS 解析: 正常
+✅ 伺服器回應: 正常 (nginx/1.20.1)
+
+【問題診斷】
+1. MAST 伺服器本身正常運作
+2. HTTPS (443) 端口可連接
+3. 下載慢可能原因：
+   - 伺服器負載過高
+   - 頻寬限制
+   - API 請求限流
+   - 網路路由問題
+
+【建議測試】
+# Windows PowerShell 完整測試
+Test-NetConnection mast.stsci.edu -Port 443
+Measure-Command { Invoke-WebRequest "https://mast.stsci.edu/" -UseBasicParsing }
+
+# 追蹤路由
+tracert mast.stsci.edu
+
+====================================================================
